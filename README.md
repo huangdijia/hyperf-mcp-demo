@@ -11,8 +11,6 @@
 - 基于 Hyperf 框架
 - 使用注解方式定义工具
 - 支持工具描述和参数说明
-- 支持多服务部署
-- Docker 容器化支持
 
 ## 安装
 
@@ -63,20 +61,36 @@ class Foo
 }
 ```
 
-### Docker 部署
+### Cursor MCP 配置
 
-项目提供了 Docker 支持，可以使用以下命令进行部署：
+要在 Cursor 中使用 MCP 工具，需要进行以下配置：
 
-```bash
-# 使用 docker-compose 启动
-docker-compose up -d
+1. 在项目根目录下创建 `/Users/[your-name]/Library/Application Support/Claude/claude_desktop_config.json` 文件
+2. 添加以下配置内容：
+
+```json
+{
+  "mcpServers": {
+    "mcp-php": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "supergateway",
+        "--sse",
+        "http://127.0.0.1:3000/sse"
+      ]
+    }
+  }
+}
 ```
 
-## 测试
+![cursor-setting](./assets/cursor-setting.png)
 
-```bash
-composer test
-```
+### 执行结果
+
+在 Cursor 中调用 MCP 工具：
+
+![call-mcp-php](./assets/call-mcp-php.png)
 
 ## 许可证
 
