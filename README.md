@@ -30,6 +30,72 @@ php bin/hyperf.php start
 
 ## 使用方法
 
+### mcp-sse server 配置
+
+```php
+<?php
+
+use Hyperf\Framework\Bootstrap\PipeMessageCallback;
+use Hyperf\Framework\Bootstrap\WorkerExitCallback;
+use Hyperf\Framework\Bootstrap\WorkerStartCallback;
+use Hyperf\Mcp\Server\McpServer;
+use Hyperf\Server\Event;
+use Hyperf\Server\Server;
+use Swoole\Constant;
+
+return [
+    'type' => Hyperf\Server\CoroutineServer::class, // !!!目前仅支持协程风格
+    'mode' => SWOOLE_PROCESS,
+    'servers' => [
+        'http' => [
+            'name' => 'http',
+            'type' => Server::SERVER_HTTP,
+            'host' => '0.0.0.0',
+            'port' => 9501,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
+            ],
+            'options' => [
+                // Whether to enable request lifecycle event
+                'enable_request_lifecycle' => false,
+            ],
+        ],
+        'mcp-sse' => [
+            'name' => 'mcp-sse',
+            'type' => Server::SERVER_HTTP,
+            'host' => '0.0.0.0',
+            'port' => 3000,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_REQUEST => [McpServer::class, 'onRequest'],
+                Event::ON_CLOSE => [McpServer::class, 'onClose'],
+            ],
+            'options' => [
+                'mcp_path' => '/sse',
+            ],
+        ],
+    ],
+    'settings' => [
+        Constant::OPTION_ENABLE_COROUTINE => true,
+        Constant::OPTION_WORKER_NUM => swoole_cpu_num(),
+        Constant::OPTION_PID_FILE => BASE_PATH . '/runtime/hyperf.pid',
+        Constant::OPTION_OPEN_TCP_NODELAY => true,
+        Constant::OPTION_MAX_COROUTINE => 100000,
+        Constant::OPTION_OPEN_HTTP2_PROTOCOL => true,
+        Constant::OPTION_MAX_REQUEST => 100000,
+        Constant::OPTION_SOCKET_BUFFER_SIZE => 2 * 1024 * 1024,
+        Constant::OPTION_BUFFER_OUTPUT_SIZE => 2 * 1024 * 1024,
+    ],
+    'callbacks' => [
+        Event::ON_WORKER_START => [WorkerStartCallback::class, 'onWorkerStart'],
+        Event::ON_PIPE_MESSAGE => [PipeMessageCallback::class, 'onPipeMessage'],
+        Event::ON_WORKER_EXIT => [WorkerExitCallback::class, 'onWorkerExit'],
+    ],
+];
+
+```
+
 ### 定义工具
 
 使用 `#[Tool]` 和 `#[Description]` 注解来定义工具和参数说明：
