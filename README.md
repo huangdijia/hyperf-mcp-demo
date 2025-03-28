@@ -32,6 +32,8 @@ php bin/hyperf.php start
 
 ### mcp-sse server 配置
 
+在 `config/autoload/server.php` 中添加以下配置：
+
 ```php
 <?php
 
