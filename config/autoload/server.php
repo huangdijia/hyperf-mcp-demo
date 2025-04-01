@@ -13,13 +13,14 @@ use Hyperf\Framework\Bootstrap\PipeMessageCallback;
 use Hyperf\Framework\Bootstrap\WorkerExitCallback;
 use Hyperf\Framework\Bootstrap\WorkerStartCallback;
 use Hyperf\Mcp\Server\McpServer;
+use Hyperf\Server\CoroutineServer;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
 use Swoole\Constant;
 
 return [
-    'type' => Hyperf\Server\CoroutineServer::class,
-    'mode' => SWOOLE_PROCESS,
+    'type' => CoroutineServer::class,
+    // 'mode' => SWOOLE_PROCESS,
     'servers' => [
         'http' => [
             'name' => 'http',

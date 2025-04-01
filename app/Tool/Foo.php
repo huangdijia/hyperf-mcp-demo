@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace App\Tool;
 
 use Hyperf\Mcp\Annotation\Description;
@@ -15,8 +25,7 @@ class Foo
     public function getBirthday(
         #[Description('姓名')]
         string $name
-    ):mixed
-    {
+    ): mixed {
         return match ($name) {
             'John' => '1990-01-01',
             'Jane' => '1991-02-02',

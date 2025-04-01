@@ -23,7 +23,7 @@
         "hyperf/guzzle": "~3.1.0",
         "hyperf/http-server": "~3.1.0",
         "hyperf/logger": "~3.1.0",
-        "hyperf/mcp": "dev-main",
+        "hyperf/mcp-incubator": "^0.1.1",
         "hyperf/memory": "~3.1.0",
         "hyperf/process": "~3.1.0",
         "hyperf/redis": "~3.1.0"
@@ -76,11 +76,5 @@
             "Composer\\Config::disableProcessTimeout",
             "php ./bin/hyperf.php start"
         ]
-    },
-    "repositories": {
-        "hyperf/mcp": {
-            "type": "vcs",
-            "url": "https://github.com/hyperf/mcp-incubator"
-        }
     }
 }
