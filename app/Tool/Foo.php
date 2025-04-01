@@ -14,7 +14,13 @@ namespace App\Tool;
 
 use Hyperf\Mcp\Annotation\Description;
 use Hyperf\Mcp\Annotation\Tool;
+use Hyperf\Mcp\Server\Annotation\Server;
 
+#[Server(
+    name: 'mcp-sse',
+    signature: 'mcp-sse',
+    description: 'This is a sse server',
+)]
 class Foo
 {
     #[Tool(
