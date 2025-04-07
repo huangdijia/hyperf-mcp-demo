@@ -9,10 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use FriendsOfHyperf\MCP\McpServer;
 use Hyperf\Framework\Bootstrap\PipeMessageCallback;
 use Hyperf\Framework\Bootstrap\WorkerExitCallback;
 use Hyperf\Framework\Bootstrap\WorkerStartCallback;
-use Hyperf\Mcp\Server\McpServer;
 use Hyperf\Server\CoroutineServer;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
