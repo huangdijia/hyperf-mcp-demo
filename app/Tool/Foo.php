@@ -12,21 +12,15 @@ declare(strict_types=1);
 
 namespace App\Tool;
 
-use Hyperf\Mcp\Annotation\Description;
-use Hyperf\Mcp\Annotation\Tool;
-use Hyperf\Mcp\Server\Annotation\Server;
+use FriendsOfHyperf\MCP\Annotation\Description;
+use FriendsOfHyperf\MCP\Annotation\Tool;
 
-#[Server(
-    name: 'mcp-sse',
-    signature: 'mcp-sse',
-    description: 'This is a sse server',
-)]
 class Foo
 {
     #[Tool(
         name: 'getBirthday',
         description: 'Get the birthday of the person',
-        serverName: 'mcp-sse'
+        server: 'mcp-sse'
     )]
     public function getBirthday(
         #[Description('姓名')]

@@ -13,6 +13,7 @@
     "license": "Apache-2.0",
     "require": {
         "php": ">=8.1",
+        "friendsofhyperf/mcp": "dev-main",
         "hyperf/cache": "~3.1.0",
         "hyperf/command": "~3.1.0",
         "hyperf/config": "~3.1.0",
@@ -23,7 +24,6 @@
         "hyperf/guzzle": "~3.1.0",
         "hyperf/http-server": "~3.1.0",
         "hyperf/logger": "~3.1.0",
-        "hyperf/mcp-incubator": "^0.1.1",
         "hyperf/memory": "~3.1.0",
         "hyperf/process": "~3.1.0",
         "hyperf/redis": "~3.1.0"
@@ -76,5 +76,11 @@
             "Composer\\Config::disableProcessTimeout",
             "php ./bin/hyperf.php start"
         ]
+    },
+    "repositories": {
+        "friendsofhyperf/mcp": {
+            "type": "path",
+            "url": "/Users/hdj/github/friendsofhyperf/mcp"
+        }
     }
 }
