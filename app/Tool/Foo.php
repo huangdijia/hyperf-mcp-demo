@@ -20,7 +20,7 @@ class Foo
     #[Tool(
         name: 'getBirthday',
         description: 'Get the birthday of the person',
-        server: 'mcp-sse'
+        server: 'demo'
     )]
     public function getBirthday(
         #[Description('姓名')]

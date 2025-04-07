@@ -46,9 +46,6 @@ return [
                 Event::ON_REQUEST => [McpServer::class, 'onRequest'],
                 Event::ON_CLOSE => [McpServer::class, 'onClose'],
             ],
-            'options' => [
-                'mcp_path' => '/sse',
-            ],
         ],
     ],
     'settings' => [
