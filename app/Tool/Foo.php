@@ -26,12 +26,12 @@ class Foo
         #[Description('姓名')]
         string $name
     ): mixed {
-        return match ($name) {
+        return ['toolResult' => match ($name) {
             'John' => '1990-01-01',
             'Jane' => '1991-02-02',
             'Jack' => '1992-03-03',
             'Jill' => '1993-04-04',
             default => null,
-        };
+        }];
     }
 }
