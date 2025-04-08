@@ -152,6 +152,34 @@ class Foo
 }
 ```
 
+### VSCode MCP 配置
+
+在 VSCode 中使用 MCP 工具，需要进行以下配置：
+
+1. 在项目根目录下创建 `.vscode/mcp.json` 文件
+
+```json
+{
+    "servers": {
+        "mcp-server": {
+            "type": "stdio",
+            "command": "php",
+            "args": [
+                "[your-path]/mcp-demo/bin/hyperf.php",
+                "mcp:run",
+                "--name",
+                "demo"
+            ],
+            "env": {}
+        },
+        "mcp-server-1": {
+            "type": "sse",
+            "url": "http://localhost:3000/sse"
+        }
+    }
+}
+```
+
 ![cursor-setting](./assets/cursor-setting.png)
 
 ### 执行结果
