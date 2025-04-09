@@ -165,7 +165,7 @@ class Foo
             "type": "stdio",
             "command": "php",
             "args": [
-                "[your-path]/mcp-demo/bin/hyperf.php",
+                "${workspaceFolder}/mcp-demo/bin/hyperf.php",
                 "mcp:run",
                 "--name",
                 "demo"
