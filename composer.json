@@ -76,11 +76,5 @@
             "Composer\\Config::disableProcessTimeout",
             "php ./bin/hyperf.php start"
         ]
-    },
-    "repositories": {
-        "friendsofhyperf/mcp": {
-            "type": "path",
-            "url": "/Users/hdj/github/friendsofhyperf/mcp"
-        }
     }
 }
