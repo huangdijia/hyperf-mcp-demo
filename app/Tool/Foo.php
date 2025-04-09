@@ -19,13 +19,13 @@ class Foo
 {
     #[Tool(
         name: 'getBirthday',
-        description: 'Get the birthday of the person',
+        description: '获取个人的生日',
         server: 'demo'
     )]
     public function getBirthday(
         #[Description('姓名')]
         string $name
-    ): mixed {
+    ): array {
         return [
             'toolResult' => match ($name) {
                 'John' => '1990-01-01',
@@ -35,5 +35,64 @@ class Foo
                 default => null,
             },
         ];
+    }
+
+    #[Tool(
+        name: 'add',
+        description: '将两个数字相加',
+        server: 'demo'
+    )]
+    public function add(
+        #[Description('第一个数字')]
+        int $a,
+        #[Description('第二个数字')]
+        int $b
+    ): array {
+        return ['toolResult' => $a + $b];
+    }
+
+    #[Tool(
+        name: 'multiply',
+        description: '将两个数字相乘',
+        server: 'demo'
+    )]
+    public function multiply(
+        #[Description('第一个数字')]
+        int $a,
+        #[Description('第二个数字')]
+        int $b
+    ): array {
+        return ['toolResult' => $a * $b];
+    }
+
+    #[Tool(
+        name: 'textProcess',
+        description: '处理文本字符串',
+        server: 'demo'
+    )]
+    public function textProcess(
+        #[Description('要处理的文本')]
+        string $text,
+        #[Description('操作,如：uppercase、lowercase、capitalize、reverse')]
+        string $operation
+    ): array {
+        switch ($operation) {
+            case 'uppercase':
+                $result = strtoupper($text);
+                break;
+            case 'lowercase':
+                $result = strtolower($text);
+                break;
+            case 'capitalize':
+                $result = ucwords($text);
+                break;
+            case 'reverse':
+                $result = strrev($text);
+                break;
+            default:
+                $result = $text;
+        }
+
+        return ['toolResult' => $result];
     }
 }
