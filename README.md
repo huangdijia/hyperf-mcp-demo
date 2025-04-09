@@ -161,7 +161,7 @@ class Foo
 ```json
 {
     "servers": {
-        "mcp-server": {
+        "mcp-server-stdio": {
             "type": "stdio",
             "command": "php",
             "args": [
@@ -172,7 +172,7 @@ class Foo
             ],
             "env": {}
         },
-        "mcp-server-1": {
+        "mcp-server-sse": {
             "type": "sse",
             "url": "http://localhost:3000/sse"
         }
