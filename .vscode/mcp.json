@@ -1,0 +1,19 @@
+{
+    "servers": {
+        "mcp-server-stdio": {
+            "type": "stdio",
+            "command": "php",
+            "args": [
+                "${workspaceFolder}/bin/hyperf.php",
+                "mcp:run",
+                "--name",
+                "demo"
+            ],
+            "env": {}
+        },
+        "mcp-server-sse": {
+            "type": "sse",
+            "url": "http://localhost:3000/sse",
+        }
+    }
+}
