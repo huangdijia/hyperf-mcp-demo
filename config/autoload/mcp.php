@@ -17,7 +17,7 @@ return [
             'description' => 'This is a demo mcp server.',
             // The options of the sse server
             'sse' => [
-                'server' => 'mcp-sse',
+                'server' => 'http',
                 'endpoint' => '/sse',
             ],
         ],

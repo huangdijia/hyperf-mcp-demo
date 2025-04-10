@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-use FriendsOfHyperf\MCP\McpServer;
 use Hyperf\Framework\Bootstrap\PipeMessageCallback;
 use Hyperf\Framework\Bootstrap\WorkerExitCallback;
 use Hyperf\Framework\Bootstrap\WorkerStartCallback;
@@ -34,17 +33,6 @@ return [
             'options' => [
                 // Whether to enable request lifecycle event
                 'enable_request_lifecycle' => false,
-            ],
-        ],
-        'mcp-sse' => [
-            'name' => 'mcp-sse',
-            'type' => Server::SERVER_HTTP,
-            'host' => '0.0.0.0',
-            'port' => 3000,
-            'sock_type' => SWOOLE_SOCK_TCP,
-            'callbacks' => [
-                Event::ON_REQUEST => [McpServer::class, 'onRequest'],
-                Event::ON_CLOSE => [McpServer::class, 'onClose'],
             ],
         ],
     ],
