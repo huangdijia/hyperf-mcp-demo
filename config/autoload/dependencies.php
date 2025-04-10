@@ -9,5 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use FriendsOfHyperf\MCP\Contract\SseServerTransport;
+use FriendsOfHyperf\MCP\Transport\RedisSseServerTransport;
+
 return [
+    // SseServerTransport::class => RedisSseServerTransport::class,
 ];
