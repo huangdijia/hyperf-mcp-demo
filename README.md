@@ -30,101 +30,61 @@ php bin/hyperf.php start
 
 ## 使用方法
 
-### mcp-sse server 配置
+### 配置
 
-在 `config/autoload/server.php` 中添加以下配置：
+MCP 服务会自动通过 `config/autoload/mcp.php` 配置文件注册 SSE 路由。配置示例：
 
 ```php
 <?php
 
-use Hyperf\Framework\Bootstrap\PipeMessageCallback;
-use Hyperf\Framework\Bootstrap\WorkerExitCallback;
-use Hyperf\Framework\Bootstrap\WorkerStartCallback;
-use Hyperf\Mcp\Server\McpServer;
-use Hyperf\Server\Event;
-use Hyperf\Server\Server;
-use Swoole\Constant;
+declare(strict_types=1);
 
 return [
-    'type' => Hyperf\Server\CoroutineServer::class, // !!!目前仅支持协程风格
-    'mode' => SWOOLE_PROCESS,
     'servers' => [
-        'http' => [
-            'name' => 'http',
-            'type' => Server::SERVER_HTTP,
-            'host' => '0.0.0.0',
-            'port' => 9501,
-            'sock_type' => SWOOLE_SOCK_TCP,
-            'callbacks' => [
-                Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
-            ],
-            'options' => [
-                // Whether to enable request lifecycle event
-                'enable_request_lifecycle' => false,
+        [
+            'name' => 'demo',
+            'version' => '1.0.0',
+            'description' => 'This is a demo mcp server.',
+            // The options of the sse server
+            'sse' => [
+                'server' => 'http',  // 指定使用的 HTTP 服务器名称
+                'endpoint' => '/sse', // SSE 端点路径
             ],
         ],
-        'mcp-sse' => [
-            'name' => 'mcp-sse',
-            'type' => Server::SERVER_HTTP,
-            'host' => '0.0.0.0',
-            'port' => 3000,
-            'sock_type' => SWOOLE_SOCK_TCP,
-            'callbacks' => [
-                Event::ON_REQUEST => [McpServer::class, 'onRequest'],
-                Event::ON_CLOSE => [McpServer::class, 'onClose'],
-            ],
-            'options' => [
-                'mcp_path' => '/sse',
-            ],
-        ],
-    ],
-    'settings' => [
-        Constant::OPTION_ENABLE_COROUTINE => true,
-        Constant::OPTION_WORKER_NUM => swoole_cpu_num(),
-        Constant::OPTION_PID_FILE => BASE_PATH . '/runtime/hyperf.pid',
-        Constant::OPTION_OPEN_TCP_NODELAY => true,
-        Constant::OPTION_MAX_COROUTINE => 100000,
-        Constant::OPTION_OPEN_HTTP2_PROTOCOL => true,
-        Constant::OPTION_MAX_REQUEST => 100000,
-        Constant::OPTION_SOCKET_BUFFER_SIZE => 2 * 1024 * 1024,
-        Constant::OPTION_BUFFER_OUTPUT_SIZE => 2 * 1024 * 1024,
-    ],
-    'callbacks' => [
-        Event::ON_WORKER_START => [WorkerStartCallback::class, 'onWorkerStart'],
-        Event::ON_PIPE_MESSAGE => [PipeMessageCallback::class, 'onPipeMessage'],
-        Event::ON_WORKER_EXIT => [WorkerExitCallback::class, 'onWorkerExit'],
     ],
 ];
-
 ```
+
+**注意**：`friendsofhyperf/mcp` 包会自动注册 SSE 路由，无需手动在 `config/autoload/server.php` 中配置 MCP 服务器。只需确保 `config/autoload/server.php` 中配置了基本的 HTTP 服务器即可
 
 ### 定义工具
 
 使用 `#[Tool]` 和 `#[Description]` 注解来定义工具和参数说明：
 
 ```php
-use Hyperf\Mcp\Annotation\Description;
-use Hyperf\Mcp\Annotation\Tool;
+use FriendsOfHyperf\MCP\Annotation\Description;
+use FriendsOfHyperf\MCP\Annotation\Tool;
 
 class Foo
 {
     #[Tool(
         name: 'getBirthday',
         description: 'Get the birthday of the person',
-        serverName: 'mcp-sse'
+        server: 'demo'  // 对应 config/autoload/mcp.php 中配置的服务器名称
     )]
     public function getBirthday(
         #[Description('姓名')]
         string $name
-    ):mixed
-    {
-        return match ($name) {
-            'John' => '1990-01-01',
-            'Jane' => '1991-02-02',
-            'Jack' => '1992-03-03',
-            'Jill' => '1993-04-04',
-            default => null,
-        };
+    ): array {
+        return [
+            'toolResult' => match ($name) {
+                'John' => '1990-01-01',
+                'Jane' => '1991-02-02',
+                'Jack' => '1992-03-03',
+                'Jill' => '1993-04-04',
+                default => null,
+            },
+        ];
     }
 }
 ```
@@ -145,7 +105,7 @@ class Foo
         "-y",
         "supergateway",
         "--sse",
-        "http://127.0.0.1:3000/sse"
+        "http://127.0.0.1:9501/sse"
       ]
     }
   }
@@ -174,7 +134,7 @@ class Foo
         },
         "mcp-server-sse": {
             "type": "sse",
-            "url": "http://localhost:3000/sse"
+            "url": "http://localhost:9501/sse"
         }
     }
 }
