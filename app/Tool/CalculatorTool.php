@@ -16,15 +16,7 @@ use Mcp\Capability\Attribute\McpTool;
 
 #[McpTool(
     name: 'calculator.add',
-    description: 'Add two numbers together',
-    meta: [
-        'type' => 'object',
-        'properties' => [
-            'a' => ['type' => 'number'],
-            'b' => ['type' => 'number'],
-        ],
-        'required' => ['a', 'b'],
-    ]
+    description: 'Add two numbers together'
 )]
 class CalculatorTool
 {
