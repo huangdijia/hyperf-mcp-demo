@@ -11,14 +11,6 @@ declare(strict_types=1);
  */
 use Hyperf\Contract\StdoutLoggerInterface;
 
-/*
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
 return [
     'servers' => [
         'default' => [
@@ -75,8 +67,8 @@ return [
             // Class discovery configuration
             'discovery' => [
                 'base_path' => BASE_PATH,
-                'scan_dirs' => ['.', 'src', 'app'],
-                'exclude_dirs' => ['vendor', 'tests', 'config', 'runtime'],
+                'scan_dirs' => ['app'],
+                'exclude_dirs' => [],
                 'cache' => null, // CacheInterface service ID for discovery cache
             ],
 
