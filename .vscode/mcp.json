@@ -9,8 +9,8 @@
             ],
             "env": {}
         },
-        "mcp-server-sse": {
-            "type": "sse",
+        "mcp-server-http": {
+            "type": "http",
             "url": "http://localhost:9501/mcp"
         }
     }
