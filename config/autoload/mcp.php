@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 return [
     'servers' => [
-        [
+        'default' => [
             'enabled' => true,
 
             // Server basic information
