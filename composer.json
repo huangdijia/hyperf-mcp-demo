@@ -13,7 +13,7 @@
     "license": "Apache-2.0",
     "require": {
         "php": ">=8.1",
-        "friendsofhyperf/mcp": "dev-main",
+        "friendsofhyperf/mcp-server": "dev-main",
         "hyperf/cache": "~3.1.0",
         "hyperf/command": "~3.1.0",
         "hyperf/config": "~3.1.0",
@@ -45,8 +45,7 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "Mcp\\": "src/"
+            "App\\": "app/"
         },
         "files": []
     },
@@ -59,7 +58,10 @@
     "prefer-stable": true,
     "config": {
         "optimize-autoloader": true,
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "extra": [],
     "scripts": {
