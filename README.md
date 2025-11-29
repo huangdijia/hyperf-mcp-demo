@@ -1,22 +1,24 @@
 # MCP Demo
 
-基于 Hyperf 框架的 MCP (Micro-service Control Protocol) 演示项目。
+基于 Hyperf 框架的 MCP (Model Context Protocol) 演示项目。
 
 ## 简介
 
-本项目展示了如何使用 Hyperf 框架的 MCP 组件来构建和管理微服务工具。通过注解的方式，可以轻松地将类方法暴露为微服务工具。
+本项目展示了如何使用 [friendsofhyperf/mcp-server](https://github.com/friendsofhyperf/mcp-server) 组件来构建 MCP 服务器。通过注解的方式，可以轻松地定义工具（Tools）、提示（Prompts）和资源（Resources）。
 
 ## 特性
 
 - 基于 Hyperf 框架
-- 使用注解方式定义工具
-- 支持工具描述和参数说明
+- 使用注解方式定义工具（`#[McpTool]`）
+- 使用注解方式定义提示（`#[McpPrompt]`）
+- 使用注解方式定义资源（`#[McpResource]`）
+- 支持 SSE 和 STDIO 两种传输模式
 
 ## 安装
 
 ```bash
 # 克隆项目
-git clone https://github.com/huangdijia/mcp-demo.git
+git clone https://github.com/huangdijia/hyperf-mcp-demo.git
 
 # 安装依赖
 composer install
@@ -28,112 +30,161 @@ cp .env.example .env
 php bin/hyperf.php start
 ```
 
-## 使用方法
+## 配置
 
-### mcp-sse server 配置
+### MCP 服务配置
 
-在 `config/autoload/server.php` 中添加以下配置：
+在 `config/autoload/mcp.php` 中配置 MCP 服务：
 
 ```php
 <?php
 
-use Hyperf\Framework\Bootstrap\PipeMessageCallback;
-use Hyperf\Framework\Bootstrap\WorkerExitCallback;
-use Hyperf\Framework\Bootstrap\WorkerStartCallback;
-use Hyperf\Mcp\Server\McpServer;
-use Hyperf\Server\Event;
-use Hyperf\Server\Server;
-use Swoole\Constant;
-
 return [
-    'type' => Hyperf\Server\CoroutineServer::class, // !!!目前仅支持协程风格
-    'mode' => SWOOLE_PROCESS,
     'servers' => [
-        'http' => [
-            'name' => 'http',
-            'type' => Server::SERVER_HTTP,
-            'host' => '0.0.0.0',
-            'port' => 9501,
-            'sock_type' => SWOOLE_SOCK_TCP,
-            'callbacks' => [
-                Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
+        [
+            'enabled' => true,
+
+            // Server basic information
+            'name' => 'Hyperf MCP Server',
+            'version' => '1.0.0',
+            'description' => 'A powerful MCP server built on Hyperf framework.',
+
+            // Protocol version
+            'protocol_version' => '2024-11-05',
+
+            // Class discovery configuration
+            'discovery' => [
+                'base_path' => BASE_PATH,
+                'scan_dirs' => ['.', 'src', 'app'],
+                'exclude_dirs' => ['vendor', 'tests', 'config'],
             ],
-            'options' => [
-                // Whether to enable request lifecycle event
-                'enable_request_lifecycle' => false,
+
+            // HTTP mode configuration
+            'http' => [
+                'path' => '/mcp',
+            ],
+
+            // STDIO mode configuration
+            'stdio' => [
+                'name' => 'mcp:server',
+                'description' => 'Run the MCP server via STDIO transport.',
             ],
         ],
-        'mcp-sse' => [
-            'name' => 'mcp-sse',
-            'type' => Server::SERVER_HTTP,
-            'host' => '0.0.0.0',
-            'port' => 3000,
-            'sock_type' => SWOOLE_SOCK_TCP,
-            'callbacks' => [
-                Event::ON_REQUEST => [McpServer::class, 'onRequest'],
-                Event::ON_CLOSE => [McpServer::class, 'onClose'],
-            ],
-            'options' => [
-                'mcp_path' => '/sse',
-            ],
-        ],
-    ],
-    'settings' => [
-        Constant::OPTION_ENABLE_COROUTINE => true,
-        Constant::OPTION_WORKER_NUM => swoole_cpu_num(),
-        Constant::OPTION_PID_FILE => BASE_PATH . '/runtime/hyperf.pid',
-        Constant::OPTION_OPEN_TCP_NODELAY => true,
-        Constant::OPTION_MAX_COROUTINE => 100000,
-        Constant::OPTION_OPEN_HTTP2_PROTOCOL => true,
-        Constant::OPTION_MAX_REQUEST => 100000,
-        Constant::OPTION_SOCKET_BUFFER_SIZE => 2 * 1024 * 1024,
-        Constant::OPTION_BUFFER_OUTPUT_SIZE => 2 * 1024 * 1024,
-    ],
-    'callbacks' => [
-        Event::ON_WORKER_START => [WorkerStartCallback::class, 'onWorkerStart'],
-        Event::ON_PIPE_MESSAGE => [PipeMessageCallback::class, 'onPipeMessage'],
-        Event::ON_WORKER_EXIT => [WorkerExitCallback::class, 'onWorkerExit'],
     ],
 ];
-
 ```
 
-### 定义工具
+## 使用方法
 
-使用 `#[Tool]` 和 `#[Description]` 注解来定义工具和参数说明：
+### 定义工具 (Tool)
+
+使用 `#[McpTool]` 注解来定义工具：
 
 ```php
-use Hyperf\Mcp\Annotation\Description;
-use Hyperf\Mcp\Annotation\Tool;
+<?php
 
-class Foo
+namespace App\Tool;
+
+use Mcp\Capability\Attribute\McpTool;
+
+#[McpTool(
+    name: 'calculator.add',
+    description: 'Add two numbers together'
+)]
+class CalculatorTool
 {
-    #[Tool(
-        name: 'getBirthday',
-        description: 'Get the birthday of the person',
-        serverName: 'mcp-sse'
-    )]
-    public function getBirthday(
-        #[Description('姓名')]
-        string $name
-    ):mixed
+    public function handle(array $params): array
     {
-        return match ($name) {
-            'John' => '1990-01-01',
-            'Jane' => '1991-02-02',
-            'Jack' => '1992-03-03',
-            'Jill' => '1993-04-04',
-            default => null,
-        };
+        $result = $params['a'] + $params['b'];
+        return [
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => "The sum of {$params['a']} and {$params['b']} is {$result}",
+                ],
+            ],
+        ];
     }
 }
 ```
 
-### Cursor MCP 配置
+### 定义提示 (Prompt)
 
-要在 Cursor 中使用 MCP 工具，需要进行以下配置：
+使用 `#[McpPrompt]` 注解来定义提示：
 
-1. 在项目根目录下创建 `/Users/[your-name]/Library/Application Support/Claude/claude_desktop_config.json` 文件
+```php
+<?php
+
+namespace App\Prompt;
+
+use Mcp\Capability\Attribute\McpPrompt;
+
+#[McpPrompt(
+    name: 'code-review',
+    description: 'Generate code review suggestions'
+)]
+class CodeReviewPrompt
+{
+    public function handle(array $params): array
+    {
+        $prompt = "Please review the following code and provide suggestions for improvement:\n\n";
+        $prompt .= $params['code'] ?? '';
+
+        return [
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => [
+                        'type' => 'text',
+                        'text' => $prompt,
+                    ],
+                ],
+            ],
+        ];
+    }
+}
+```
+
+### 定义资源 (Resource)
+
+使用 `#[McpResource]` 注解来定义资源：
+
+```php
+<?php
+
+namespace App\Resource;
+
+use Mcp\Capability\Attribute\McpResource;
+
+#[McpResource(
+    uri: 'file:///var/log/app.log',
+    name: 'Application Log',
+    description: 'Current application log file',
+    mimeType: 'text/plain'
+)]
+class LogResource
+{
+    public function handle(array $params): array
+    {
+        $content = file_get_contents('/var/log/app.log');
+        return [
+            'contents' => [
+                [
+                    'uri' => $params['uri'],
+                    'mimeType' => 'text/plain',
+                    'text' => $content,
+                ],
+            ],
+        ];
+    }
+}
+```
+
+### Claude Desktop 配置
+
+要在 Claude Desktop 中使用 MCP 工具，需要进行以下配置：
+
+1. 编辑配置文件 `~/Library/Application Support/Claude/claude_desktop_config.json`（macOS）
 2. 添加以下配置内容：
 
 ```json
@@ -145,7 +196,7 @@ class Foo
         "-y",
         "supergateway",
         "--sse",
-        "http://127.0.0.1:3000/sse"
+        "http://127.0.0.1:9501/mcp"
       ]
     }
   }
@@ -166,15 +217,13 @@ class Foo
             "command": "php",
             "args": [
                 "${workspaceFolder}/bin/hyperf.php",
-                "mcp:run",
-                "--name",
-                "demo"
+                "mcp:server"
             ],
             "env": {}
         },
         "mcp-server-sse": {
             "type": "sse",
-            "url": "http://localhost:3000/sse"
+            "url": "http://localhost:9501/mcp"
         }
     }
 }
