@@ -10,6 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 use Hyperf\Contract\StdoutLoggerInterface;
+use Mcp\Server\Session\InMemorySessionStore;
+use Mcp\Server\Session\SessionFactory;
 
 return [
     'servers' => [
@@ -47,8 +49,8 @@ return [
             // Session configuration
             'session' => [
                 'ttl' => 3600, // 1 hour
-                'store' => null, // SessionStore service ID
-                'factory' => null, // SessionFactory service ID
+                'store' => InMemorySessionStore::class, // SessionStore service ID
+                'factory' => SessionFactory::class, // SessionFactory service ID
             ],
 
             // Custom server capabilities (optional, will auto-detect if not set)
